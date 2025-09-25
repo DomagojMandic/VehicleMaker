@@ -21,7 +21,7 @@ import { Link } from 'react-router-dom';
 
 // Base styled component
 const StyledVehicleGrid = styled.div`
-  margin: 2rem 3.5rem 3rem 3.5rem;
+  margin: 0rem 3.5rem 3rem 0rem;
 `;
 
 // Grid layout
@@ -31,8 +31,8 @@ const Grid = styled.div`
   gap: 2rem;
   justify-content: center;
   width: 100%;
-  margin-top: 3rem;
-  padding: 3rem 2rem;
+
+  padding: 1rem 2rem;
 `;
 
 // Card component with TypeScript props

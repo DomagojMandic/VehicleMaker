@@ -1,11 +1,16 @@
+import { Provider } from 'react-redux';
+
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router';
 import { Toaster } from 'react-hot-toast';
+
 import AppLayout from './components/layout/AppLayout';
+import { toasterOptions } from './components/features/Toaster/ToasterOptions';
+
 import Home from './pages/Home';
 import VehicleModel from './pages/VehicleModel';
 import VehicleMake from './pages/VehicleMake';
 import VehicleItem from './pages/VehicleItem';
-import { toasterOptions } from './components/features/Toaster/ToasterOptions';
+import store from './store/store';
 
 const router = createBrowserRouter([
   {
@@ -30,10 +35,10 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <>
+    <Provider store={store}>
       <RouterProvider router={router} />
       <Toaster {...toasterOptions} />
-    </>
+    </Provider>
   );
 }
 

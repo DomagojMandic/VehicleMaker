@@ -1,76 +1,46 @@
+import { useSearchParams } from 'react-router';
 import StyledVehicleGridCompound from '../components/layout/StyledVehicleGrid';
 import VehicleGrid from '../components/layout/VehicleGrid';
+import LoadingSpinner from '../components/UI/LoadingSpinner/LoadingSpinner';
+import Pagination from '../components/UI/Pagination/Pagination';
+import { useGetVehicleMakesQuery } from '../store/vehicleApiSlice';
 
 function VehicleMake() {
+  const [searchParams] = useSearchParams();
+
+  /* We destructure the query so that we have direct access to VehicleMakes Array */
+  const {
+    data: { items: vehicleMakes, count } = { items: [], count: 0 },
+    isLoading,
+  } = useGetVehicleMakesQuery({
+    page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
+  });
+
+  if (isLoading) {
+    return <LoadingSpinner text="Loading models" />;
+  }
+
   return (
-    <VehicleGrid>
-      <StyledVehicleGridCompound.Card to="/vehicle/car/123">
-        <StyledVehicleGridCompound.Content>
-          <StyledVehicleGridCompound.Title>
-            Porsche
-          </StyledVehicleGridCompound.Title>
-          <StyledVehicleGridCompound.Subtitle>
-            911 Turbo S
-          </StyledVehicleGridCompound.Subtitle>
-          <StyledVehicleGridCompound.Details>
-            992 Turbo S
-          </StyledVehicleGridCompound.Details>
-        </StyledVehicleGridCompound.Content>
-      </StyledVehicleGridCompound.Card>
-      <StyledVehicleGridCompound.Card to="/vehicle/car/123">
-        <StyledVehicleGridCompound.Content>
-          <StyledVehicleGridCompound.Title>
-            Audi AG
-          </StyledVehicleGridCompound.Title>
-          <StyledVehicleGridCompound.Subtitle>
-            RennSport 7
-          </StyledVehicleGridCompound.Subtitle>
-          <StyledVehicleGridCompound.Details>
-            RS7
-          </StyledVehicleGridCompound.Details>
-        </StyledVehicleGridCompound.Content>
-      </StyledVehicleGridCompound.Card>
-      <StyledVehicleGridCompound.Card to="/vehicle/car/123">
-        <StyledVehicleGridCompound.Content>
-          <StyledVehicleGridCompound.Title>
-            Car Maker
-          </StyledVehicleGridCompound.Title>
-          <StyledVehicleGridCompound.Subtitle>
-            Car Model
-          </StyledVehicleGridCompound.Subtitle>
-        </StyledVehicleGridCompound.Content>
-      </StyledVehicleGridCompound.Card>
-      <StyledVehicleGridCompound.Card to="/vehicle/car/123">
-        <StyledVehicleGridCompound.Content>
-          <StyledVehicleGridCompound.Title>
-            Car Maker
-          </StyledVehicleGridCompound.Title>
-          <StyledVehicleGridCompound.Subtitle>
-            Car Model
-          </StyledVehicleGridCompound.Subtitle>
-        </StyledVehicleGridCompound.Content>
-      </StyledVehicleGridCompound.Card>
-      <StyledVehicleGridCompound.Card to="/vehicle/car/123">
-        <StyledVehicleGridCompound.Content>
-          <StyledVehicleGridCompound.Title>
-            Car Maker
-          </StyledVehicleGridCompound.Title>
-          <StyledVehicleGridCompound.Subtitle>
-            Car Model
-          </StyledVehicleGridCompound.Subtitle>
-        </StyledVehicleGridCompound.Content>
-      </StyledVehicleGridCompound.Card>
-      <StyledVehicleGridCompound.Card to="/vehicle/car/123">
-        <StyledVehicleGridCompound.Content>
-          <StyledVehicleGridCompound.Title>
-            Car Maker
-          </StyledVehicleGridCompound.Title>
-          <StyledVehicleGridCompound.Subtitle>
-            Car Model
-          </StyledVehicleGridCompound.Subtitle>
-        </StyledVehicleGridCompound.Content>
-      </StyledVehicleGridCompound.Card>
-    </VehicleGrid>
+    <>
+      <VehicleGrid>
+        {vehicleMakes?.map((make) => (
+          <StyledVehicleGridCompound.Card
+            key={make.id}
+            to={`/vehicle/make/${make.id}`}
+          >
+            <StyledVehicleGridCompound.Content>
+              <StyledVehicleGridCompound.Title>
+                {make.name}
+              </StyledVehicleGridCompound.Title>
+              <StyledVehicleGridCompound.Subtitle>
+                {make.abrv}
+              </StyledVehicleGridCompound.Subtitle>
+            </StyledVehicleGridCompound.Content>
+          </StyledVehicleGridCompound.Card>
+        ))}
+      </VehicleGrid>
+      <Pagination totalVehicles={count} />
+    </>
   );
 }
 

@@ -8,7 +8,7 @@ interface StyledHeaderProps {
 
 const StyledHeader = styled.header<StyledHeaderProps>`
   background-color: ${(props) => props.$backgroundColor || 'var(--brown-900)'};
-  padding: ${(props) => props.$padding || '2rem'};
+  padding: ${(props) => props.$padding || '1.5rem'};
   box-shadow: ${(props) => props.$boxShadow || ''};
   display: flex;
   justify-content: space-between;

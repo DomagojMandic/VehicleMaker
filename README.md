@@ -75,6 +75,42 @@ All components follow AirBNB naming conventions.
 Built passes with zero linting errors (except 2 spreading props) because I used the fallback older versions of everything.
 ============================================================================================
 
+SECOND COMMIT
+RTK Query + Supabase integration with server-side pagination
+
+Added RTK Query setup with fakeBaseQuery for direct Supabase calls.
+Implemented error handling with { data } | { error } return patterns. Error Component will
+be added later on. For now the Loading state is fully implemented with a Spinner.
+
+Setup Supabase client integration
+- Direct database calls with PostgreSQL error typing
+- Server-side pagination with .range() method
+- Exact count retrieval for total results, which makes pagination easier.
+- cRud
+
+Created vehicle API layer with TypeScript safety
+- VehicleMakesResponse and VehicleModelsResponse types
+- getVehiclesParams for pagination parameters
+
+Added reusable Pagination component
+
+URL search params integration for state persistence.
+Previous/Next navigation with disabled states.
+Results display showing "X to Y of Z total" format.
+
+Implemented RTK Query cache management with tagTypes
+
+All functions follow RTK Query compatibility patterns.
+TypeScript strict typing maintained throughout.
+Zero compilation errors.
+
+Next up the individual Vehicle Items will be displayed and the form for editing the current
+ones will be created using React Hook Form.
+============================================================================================
+
+
+
+
 ```js
 export default defineConfig([
   globalIgnores(['dist']),
