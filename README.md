@@ -108,6 +108,37 @@ Next up the individual Vehicle Items will be displayed and the form for editing 
 ones will be created using React Hook Form.
 ============================================================================================
 
+THIRD COMMIT
+
+Extended RTK Query with single-item queries
+- Added useGetVehicleMakeQuery, useGetVehicleModelByIdQuery, useGetVehicleModelsByMakeQuery
+
+Integrated React Hook Form with template-driven forms
+- modelFormTemplate and makeFormTemplate with validation rules
+- Dynamic rendering through renderModelInputField and renderMakeInputField
+- Strongly typed RegisterOptions for validation compatibility
+
+Created reusable form components
+- FormInput and FormSelect using forwardRef for RHF support
+- Register prop spreading keeps state connected
+- Initial step towards a scalable reusable form system
+
+Implemented MakeEntity and ModelEntity components
+- URL param-based switching between make and model forms
+- Conditional edit mode with disabled state propagation
+- Grid display of related models when viewing Makes
+
+Enhanced validation and error management
+- Centralized toast notifications
+- Zero TypeScript and ESLint errors
+
+Next up: add RTK Query mutations (create/update/delete) with cache invalidation,
+and wire up form submissions with trimming and data formatting. Pagination will be supported
+with individual item access
+
+============================================================================================
+
+
 
 
 

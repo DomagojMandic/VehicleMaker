@@ -15,6 +15,7 @@ function Button({
   ...rest
 }: ButtonProps) {
   return (
+    /* eslint-disable react/jsx-props-no-spreading */
     <StyledButton $size={$size} disabled={disabled} type={type} {...rest}>
       {children}
     </StyledButton>

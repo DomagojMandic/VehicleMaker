@@ -32,11 +32,14 @@ function VehicleModel() {
           >
             <StyledVehicleGridCompound.Content>
               <StyledVehicleGridCompound.Title>
-                {model.name}
+                {model.carMaker}
               </StyledVehicleGridCompound.Title>
               <StyledVehicleGridCompound.Subtitle>
-                {model.abrv}
+                {model.name}
               </StyledVehicleGridCompound.Subtitle>
+              <StyledVehicleGridCompound.Details>
+                {model.abrv}
+              </StyledVehicleGridCompound.Details>
             </StyledVehicleGridCompound.Content>
           </StyledVehicleGridCompound.Card>
         ))}

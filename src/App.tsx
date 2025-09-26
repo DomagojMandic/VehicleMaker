@@ -9,8 +9,9 @@ import { toasterOptions } from './components/features/Toaster/ToasterOptions';
 import Home from './pages/Home';
 import VehicleModel from './pages/VehicleModel';
 import VehicleMake from './pages/VehicleMake';
-import VehicleItem from './pages/VehicleItem';
 import store from './store/store';
+import ModelEntity from './pages/ModelEntity';
+import MakeEntity from './pages/MakeEntity';
 
 const router = createBrowserRouter([
   {
@@ -27,7 +28,10 @@ const router = createBrowserRouter([
       { path: 'makes', element: <VehicleMake /> },
       {
         path: 'vehicle',
-        children: [{ path: ':type/:vehicleItemId', element: <VehicleItem /> }],
+        children: [
+          { path: 'model/:vehicleItemId', element: <ModelEntity /> },
+          { path: 'make/:vehicleItemId', element: <MakeEntity /> },
+        ],
       },
     ],
   },
@@ -37,6 +41,7 @@ function App() {
   return (
     <Provider store={store}>
       <RouterProvider router={router} />
+      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
       <Toaster {...toasterOptions} />
     </Provider>
   );
