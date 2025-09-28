@@ -137,8 +137,26 @@ and wire up form submissions with trimming and data formatting. Pagination will 
 with individual item access
 
 ============================================================================================
+FOURTH COMMIT
+React Hook Form integration with template-based validation
 
+Added RHF integration for editing VehicleModel and VehicleMake.
 
+Introduced template system (modelFormTemplate, makeFormTemplate) with dynamic render functions.
+
+Custom validation logic: empty string checks + "no changes" detection via closure.
+
+Connected RTK Query mutations (updateVehicleModel, updateVehicleMake) with loading and error states.
+
+Edit mode toggle with proper form reset handling.
+
+Extended typing (VehicleModelDb, FormFields, MakeFormFields) with strict RHF compatibility.
+
+Submit button and inputs now follow isDirty + isEditing states.
+
+Next up: Delete + Create operations with cache invalidation.
+
+============================================================================================
 
 
 

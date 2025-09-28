@@ -12,6 +12,8 @@ import VehicleMake from './pages/VehicleMake';
 import store from './store/store';
 import ModelEntity from './pages/ModelEntity';
 import MakeEntity from './pages/MakeEntity';
+import CreateMake from './pages/CreateMake';
+import CreateModel from './pages/CreateModel';
 
 const router = createBrowserRouter([
   {
@@ -33,6 +35,8 @@ const router = createBrowserRouter([
           { path: 'make/:vehicleItemId', element: <MakeEntity /> },
         ],
       },
+      { path: 'create-make', element: <CreateMake /> },
+      { path: 'create-model', element: <CreateModel /> },
     ],
   },
 ]);

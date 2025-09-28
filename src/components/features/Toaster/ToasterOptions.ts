@@ -1,5 +1,3 @@
-/* These options are spreaded across the Toaster component in App.tsx */
-
 export const toasterOptions = {
   position: 'top-center' as const,
   reverseOrder: false,
@@ -26,6 +24,13 @@ export const toasterOptions = {
       iconTheme: {
         primary: 'rgba(240,68, 56,1)',
         secondary: 'rgba(240,68, 56,1)',
+      },
+    },
+    info: {
+      duration: 3000,
+      iconTheme: {
+        primary: 'rgba(23, 162, 184, 1)',
+        secondary: 'rgba(23, 162, 184, 1)',
       },
     },
   },

@@ -1,6 +1,11 @@
 import { PAGE_SIZE } from './constants';
 import supabase from './supabase';
-import type { VehicleMake, VehicleModel, VehicleModelNotFlat } from './types';
+import type {
+  VehicleMake,
+  VehicleModel,
+  VehicleModelDb,
+  VehicleModelNotFlat,
+} from './types';
 
 /* Here we define functions and types that will be called with RTK Query */
 
@@ -108,6 +113,22 @@ export async function getVehicleMakeById({ id }: { id: string | undefined }) {
     console.error('Network error:', error);
     return { error: 'Network connection failed' };
   }
+}
+
+export async function updateMake(vehicleMake: VehicleMake) {
+  const { data: updatedVehicle, error: updateError } = await supabase
+    .from('VehicleMake')
+    .update(vehicleMake)
+    .eq('id', vehicleMake.id)
+    .select()
+    .single();
+
+  if (updateError) {
+    console.error('Supabase error:', updateError);
+    return { error: updateError.message };
+  }
+
+  return { data: updatedVehicle as VehicleMake };
 }
 
 /* ============================== VEHICLE MODELS ============================= */
@@ -221,4 +242,22 @@ export async function getVehicleModelById({ id }: { id: string | undefined }) {
     console.error('Network error:', error);
     return { error: 'Network connection failed' };
   }
+}
+
+export async function updateModel(
+  vehicleModel: Omit<VehicleModel, 'carMaker'>,
+) {
+  const { data: updatedVehicle, error: updateError } = await supabase
+    .from('VehicleModel')
+    .update(vehicleModel)
+    .eq('id', vehicleModel.id)
+    .select()
+    .single();
+
+  if (updateError) {
+    console.error('Supabase error:', updateError);
+    return { error: updateError.message };
+  }
+
+  return { data: updatedVehicle as VehicleModelDb };
 }

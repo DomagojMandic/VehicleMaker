@@ -25,7 +25,7 @@ const StyledContainer = styled.div<ContainerProps>`
   padding: ${(props) => props.$padding || 'var(--spacing-md)'};
   display: flex;
   flex-direction: ${(props) => props.$direction || 'row'};
-  gap: ${(props) => props.$gap || 'var(--spacing-sm)'};
+  gap: ${(props) => props.$gap || ''};
   justify-content: ${(props) => props.$justify || 'flex-start'};
   align-items: ${(props) => props.$align || 'flex-start'};
   background-color: ${(props) => props.$backgroundColor || 'var(--brown-100)'};

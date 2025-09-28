@@ -40,11 +40,12 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
 
 const FormSelect = forwardRef<HTMLSelectElement, SelectProps>(
   // eslint-disable-next-line react/display-name
-  ({ vehicleArray, disabled = true }, ref) => {
+  ({ vehicleArray, disabled = true, ...props }, ref) => {
     if (vehicleArray.length === 0) return null;
 
     return (
-      <StyledSelect ref={ref} disabled={disabled}>
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      <StyledSelect ref={ref} disabled={disabled} {...props}>
         {vehicleArray.map((vehicle) => (
           <StyledOption key={vehicle.id} value={vehicle.id}>
             {vehicle.name}

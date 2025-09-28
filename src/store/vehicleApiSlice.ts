@@ -6,12 +6,18 @@ import {
   getVehicleMakeById,
   getVehicleModelById,
   getVehicleModelsByMakeId,
+  updateMake,
+  updateModel,
   type GetModelsByIdParams,
   type GetVehiclesParams,
   type VehicleMakesResponse,
   type VehicleModelsResponse,
 } from '../api/vehicleApi';
-import { type VehicleMake, type VehicleModel } from '../api/types';
+import {
+  type VehicleMake,
+  type VehicleModel,
+  type VehicleModelDb,
+} from '../api/types';
 
 /* Because of Pagination, we had to include the count of total items and 
 make a seperate Response type */
@@ -21,7 +27,7 @@ export const vehicleApi = createApi({
   baseQuery: fakeBaseQuery<string>(),
   tagTypes: [
     'VehicleMake',
-    'VehicleModel',
+    'VehicleModels',
     'VehiclesByMakeId',
     'VehicleModel',
     'VehicleMakeById',
@@ -37,12 +43,22 @@ export const vehicleApi = createApi({
     }),
     getVehicleMake: builder.query<VehicleMake, { id: string }>({
       queryFn: ({ id }) => getVehicleMakeById({ id }),
-      providesTags: ['VehicleMakeById'],
+      providesTags: (_, __, { id }) => [{ type: 'VehicleMakeById', id }],
     }),
+    updateVehicleMake: builder.mutation<VehicleMake, VehicleMake>({
+      queryFn: (vehicleMake) => updateMake(vehicleMake),
+      invalidatesTags: (_, __, { id }) => [
+        /* We are invalidating everything so the UI updates in real time. */
+        { type: 'VehicleMakeById', id },
+        { type: 'VehicleMake' },
+        { type: 'VehiclesByMakeId' },
+      ],
+    }),
+
     /* ======================= VEHICLE MODELS FUNCTIONS ======================= */
     getVehicleModels: builder.query<VehicleModelsResponse, GetVehiclesParams>({
       queryFn: ({ page }) => getAllVehicleModels({ page }),
-      providesTags: ['VehicleModel'],
+      providesTags: ['VehicleModels'],
     }),
     getVehicleModelsByMake: builder.query<
       VehicleModelsResponse,
@@ -53,7 +69,18 @@ export const vehicleApi = createApi({
     }),
     getVehicleModelById: builder.query<VehicleModel, { id: string }>({
       queryFn: ({ id }) => getVehicleModelById({ id }),
-      providesTags: ['VehicleModel'],
+      providesTags: (_, __, { id }) => [{ type: 'VehicleModel', id }],
+    }),
+    updateVehicleModel: builder.mutation<
+      VehicleModelDb,
+      Omit<VehicleModel, 'carMaker'>
+    >({
+      queryFn: (vehicleModel) => updateModel(vehicleModel),
+      invalidatesTags: (_, __, { id }) => [
+        { type: 'VehicleModel', id },
+        { type: 'VehicleModels' },
+        { type: 'VehiclesByMakeId' },
+      ],
     }),
   }),
 });
@@ -65,4 +92,6 @@ export const {
   useGetVehicleModelsQuery,
   useGetVehicleModelsByMakeQuery,
   useGetVehicleModelByIdQuery,
+  useUpdateVehicleMakeMutation,
+  useUpdateVehicleModelMutation,
 } = vehicleApi;

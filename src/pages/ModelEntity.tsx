@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { useForm } from 'react-hook-form';
+import { useForm, type FieldErrors } from 'react-hook-form';
+
+import { toast } from 'react-hot-toast';
 
 import {
   useGetVehicleMakesQuery,
   useGetVehicleModelByIdQuery,
+  useUpdateVehicleModelMutation,
 } from '../store/vehicleApiSlice';
 
 import FormBase, { FormRow } from '../components/layout/FormBase';
@@ -49,12 +52,21 @@ function ModelEntity() {
       id: vehicleItemId || '',
     });
 
+  // Destructure the mutation hook and creating state from a tuple
+  const [updateVehicleModel, { isLoading: isUpdating }] =
+    useUpdateVehicleModelMutation();
+
   // Fetching available vehicle makes for the select input
   const { data: { items: vehicleMakes } = { items: [] } } =
     useGetVehicleMakesQuery({ page: undefined });
 
   // Initialize form only after data is available
-  const { register, handleSubmit, reset } = useForm<FormFields>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { isSubmitting, isDirty },
+  } = useForm<FormFields>({
     defaultValues: {
       name: '',
       abrv: '',
@@ -62,12 +74,55 @@ function ModelEntity() {
   });
 
   function handleEdit() {
+    if (isEditing) {
+      const initialData = {
+        name: vehicleModel?.name || '',
+        abrv: vehicleModel?.abrv || '',
+        makeId: String(vehicleModel?.makeId || ''),
+      };
+      reset(initialData);
+    }
     setIsEditing((prev) => !prev);
   }
 
-  function onSubmit(data: FormFields) {
-    console.log('Form submitted with data:', data);
+  function handleErrors(receivedError: FieldErrors<FormFields>) {
+    onError(receivedError);
   }
+
+  function onSubmit(data: FormFields) {
+    if (!isDirty) {
+      toast.error('No changes were made to the form', {
+        position: 'top-center',
+      });
+      setIsEditing(false);
+      return;
+    }
+
+    const updatedModel = {
+      id: vehicleModel!.id,
+      created_at: vehicleModel!.created_at,
+      name: data.name,
+      abrv: data.abrv,
+      makeId: Number(data.makeId),
+    };
+
+    // Call the mutation function to update the vehicle model
+
+    updateVehicleModel(updatedModel).then(({ data: vehicleModelDb, error }) => {
+      if (error) {
+        onError(error as FieldErrors<FormFields>);
+      }
+
+      if (vehicleModelDb && !error) {
+        setIsEditing(false);
+        toast.success('Model updated successfully', {
+          position: 'top-center',
+        });
+      }
+    });
+  }
+
+  const isDisabled = isEditing && !isSubmitting && !isUpdating;
 
   /*  Updates defaultValues when API data arrives, vehicleModel changes or current
       vehicleModel data changes
@@ -78,6 +133,7 @@ function ModelEntity() {
       reset({
         name: vehicleModel.name,
         abrv: vehicleModel.abrv,
+        makeId: String(vehicleModel.makeId),
       });
     }
   }, [vehicleModel, reset]);
@@ -88,19 +144,23 @@ function ModelEntity() {
 
       {vehicleModel && (
         <FormBase
-          onSubmit={handleSubmit(onSubmit, onError)}
+          onSubmit={handleSubmit(onSubmit, handleErrors)}
           $gridColumnAreas={gridTemplateAreas}
         >
           <FormRow $area="edit">
-            <Button $size="large" onClick={() => handleEdit()}>
+            <Button
+              $size="large"
+              onClick={() => handleEdit()}
+              disabled={isUpdating || isSubmitting}
+            >
               {isEditing ? 'Cancel editing' : 'Edit'}
             </Button>
           </FormRow>
           {modelFormTemplate.map((field) =>
-            renderModelInputField(field, register, isEditing, vehicleMakes),
+            renderModelInputField(field, register, isDisabled, vehicleMakes),
           )}
           <FormRow $area="button">
-            <Button type="submit" $size="large" disabled={!isEditing}>
+            <Button type="submit" $size="large" disabled={!isDisabled}>
               Submit
             </Button>
           </FormRow>

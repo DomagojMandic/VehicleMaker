@@ -114,7 +114,7 @@ export function renderMakeInputField(
           </FormRow>
         </React.Fragment>
       );
-    case 'select':
+
     default:
       throw new Error(`Unsupported field type: ${field.type}`);
   }

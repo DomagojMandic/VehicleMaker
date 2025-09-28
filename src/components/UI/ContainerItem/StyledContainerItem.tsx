@@ -6,13 +6,17 @@ interface ContainerItemProps {
   $padding?: string;
   $backgroundColor?: string;
   $borderRadius?: string;
+  $height?: string;
+  $width?: string;
+  $minHeight?: string;
+  $minWidth?: string;
 }
 
 const StyledContainerItem = styled(Link)<ContainerItemProps>`
-  width: 280px;
-  height: 280px;
-  min-width: 280px;
-  min-height: 280px;
+  width: ${(props) => props.$width || '280px'};
+  height: ${(props) => props.$height || '280px'};
+  min-width: ${(props) => props.$minWidth || '280px'};
+  min-height: ${(props) => props.$minHeight || '280px'};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -33,7 +37,11 @@ const StyledContainerItem = styled(Link)<ContainerItemProps>`
     transform: translateY(-4px);
     box-shadow: var(--shadow-lg);
     border-color: var(--brown-300);
-    background-color: var(--brown-100);
+    background-color: var(--brown-500);
+  }
+
+  &:hover h2 {
+    color: var(--gray-300);
   }
 
   &:active {

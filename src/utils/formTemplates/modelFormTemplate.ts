@@ -1,4 +1,3 @@
-// src/utils/formTemplates/modelFormTemplate.ts
 import type { Path, RegisterOptions } from 'react-hook-form';
 import type { FormFields } from '../../pages/ModelEntity';
 import type { MakeFormFields } from '../../pages/MakeEntity';
@@ -56,6 +55,8 @@ export const modelFormTemplate: ModelFormField[] = [
         value: 30,
         message: 'Model name must be at most 30 characters',
       },
+      validate: (value) =>
+        value.trim() !== '' || 'Name cannot be empty or just spaces',
     },
   },
   {
@@ -75,6 +76,8 @@ export const modelFormTemplate: ModelFormField[] = [
         value: 15,
         message: 'Abbreviation must be at most 15 characters',
       },
+      validate: (value) =>
+        value.trim() !== '' || 'Abbreviation cannot be empty or just spaces',
     },
   },
   {
@@ -85,6 +88,7 @@ export const modelFormTemplate: ModelFormField[] = [
     disabled: true,
     validation: {
       required: 'Make selection is required',
+      /* Addition validation will be added in the render function */
     },
   },
 ];
@@ -117,6 +121,8 @@ export const makeFormTemplate: MakeFormField[] = [
         value: 30,
         message: 'Make name must be at most 30 characters',
       },
+      validate: (value) =>
+        value.trim() !== '' || 'Name cannot be empty or just spaces',
     },
   },
   {
@@ -135,6 +141,8 @@ export const makeFormTemplate: MakeFormField[] = [
         value: 15,
         message: 'Abbreviation must be at most 15 characters',
       },
+      validate: (value) =>
+        value.trim() !== '' || 'Abbreviation cannot be empty or just spaces',
     },
   },
 ];
