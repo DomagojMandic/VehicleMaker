@@ -10,9 +10,9 @@ import type { ModelFormField, MakeFormField } from './modelFormTemplate';
 
 import type { FormFields } from '../../pages/ModelEntity';
 import type { MakeFormFields } from '../../pages/MakeEntity';
-import FormSelect, {
-  type Vehicle,
-} from '../../components/UI/Inputs/FormSelect';
+import FormSelect from '../../components/UI/Inputs/FormSelect';
+import type { Vehicle } from '../../api/types';
+import type { MakeValidations, ModelValidations } from '../helpers/helpers';
 
 /* ====================================== MODEL ENTITY FUNCTION ================================= */
 
@@ -31,7 +31,10 @@ export function renderModelInputField(
   register: UseFormRegister<FormFields>,
   disabled: boolean,
   vehicleMakes: Vehicle[],
+  validations: ModelValidations,
 ) {
+  const fieldValidation = validations[field.name];
+
   switch (field.type) {
     case 'text':
     case 'number':
@@ -51,7 +54,7 @@ export function renderModelInputField(
               disabled={!disabled}
               // Here we are casting name to Path<FormFields> so register signature matches exactly
               // eslint-disable-next-line react/jsx-props-no-spreading
-              {...register(field.name as Path<FormFields>, field.validation)}
+              {...register(field.name as Path<FormFields>, fieldValidation)}
             />
           </FormRow>
         </React.Fragment>
@@ -70,7 +73,7 @@ export function renderModelInputField(
               vehicleArray={vehicleMakes}
               disabled={!disabled}
               // eslint-disable-next-line react/jsx-props-no-spreading
-              {...register(field.name as Path<FormFields>, field.validation)}
+              {...register(field.name as Path<FormFields>, fieldValidation)}
             />
           </FormRow>
         </React.Fragment>
@@ -86,7 +89,10 @@ export function renderMakeInputField(
   field: MakeFormField,
   register: UseFormRegister<MakeFormFields>,
   disabled: boolean,
+  validations: MakeValidations,
 ) {
+  const fieldValidation = validations[field.name];
+
   switch (field.type) {
     case 'text':
     case 'number':
@@ -106,10 +112,7 @@ export function renderMakeInputField(
               disabled={!disabled}
               // Here we are casting name to Path<MakeFormFields> so register signature matches exactly
               // eslint-disable-next-line react/jsx-props-no-spreading
-              {...register(
-                field.name as Path<MakeFormFields>,
-                field.validation,
-              )}
+              {...register(field.name as Path<MakeFormFields>, fieldValidation)}
             />
           </FormRow>
         </React.Fragment>

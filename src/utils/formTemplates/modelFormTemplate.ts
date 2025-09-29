@@ -45,19 +45,6 @@ export const modelFormTemplate: ModelFormField[] = [
     type: 'text',
     placeholder: 'Enter model name',
     disabled: true,
-    validation: {
-      required: 'Model name is required',
-      minLength: {
-        value: 2,
-        message: 'Model name must be at least 2 characters',
-      },
-      maxLength: {
-        value: 30,
-        message: 'Model name must be at most 30 characters',
-      },
-      validate: (value) =>
-        value.trim() !== '' || 'Name cannot be empty or just spaces',
-    },
   },
   {
     name: 'abrv',
@@ -65,20 +52,6 @@ export const modelFormTemplate: ModelFormField[] = [
     type: 'text',
     placeholder: 'Enter abbreviation',
     disabled: true,
-
-    validation: {
-      required: 'Abbreviation is required',
-      minLength: {
-        value: 1,
-        message: 'Abbreviation must be at least 1 character',
-      },
-      maxLength: {
-        value: 15,
-        message: 'Abbreviation must be at most 15 characters',
-      },
-      validate: (value) =>
-        value.trim() !== '' || 'Abbreviation cannot be empty or just spaces',
-    },
   },
   {
     name: 'makeId',
@@ -86,10 +59,6 @@ export const modelFormTemplate: ModelFormField[] = [
     type: 'select',
     placeholder: 'Select a make',
     disabled: true,
-    validation: {
-      required: 'Make selection is required',
-      /* Addition validation will be added in the render function */
-    },
   },
 ];
 
@@ -111,19 +80,6 @@ export const makeFormTemplate: MakeFormField[] = [
     type: 'text',
     placeholder: 'Enter make name',
     disabled: true,
-    validation: {
-      required: 'Make name is required',
-      minLength: {
-        value: 2,
-        message: 'Make name must be at least 2 characters',
-      },
-      maxLength: {
-        value: 30,
-        message: 'Make name must be at most 30 characters',
-      },
-      validate: (value) =>
-        value.trim() !== '' || 'Name cannot be empty or just spaces',
-    },
   },
   {
     name: 'abrv',
@@ -131,18 +87,5 @@ export const makeFormTemplate: MakeFormField[] = [
     type: 'text',
     placeholder: 'Enter abbreviation',
     disabled: true,
-    validation: {
-      required: 'Abbreviation is required',
-      minLength: {
-        value: 1,
-        message: 'Abbreviation must be at least 1 character',
-      },
-      maxLength: {
-        value: 15,
-        message: 'Abbreviation must be at most 15 characters',
-      },
-      validate: (value) =>
-        value.trim() !== '' || 'Abbreviation cannot be empty or just spaces',
-    },
   },
 ];

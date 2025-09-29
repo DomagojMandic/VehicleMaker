@@ -157,6 +157,32 @@ Submit button and inputs now follow isDirty + isEditing states.
 Next up: Delete + Create operations with cache invalidation.
 
 ============================================================================================
+FIFTH COMMIT
+
+Refactored forms into reusable hooks with better validation.
+
+
+Implemented reusable hooks for form logic
+- useMakeForm and useModelForm centralize create/edit logic
+- Cleaner MakeEntity and ModelEntity components with custom UI logic.
+
+Enhanced validation
+- Trimmed inputs and blocked empty strings
+- Added async unique-field validation against DB
+- Centralized validation rules in helpers which apply custom validation to each field name.
+
+Improved error handling and UX
+- Unified onError handler with toast feedback
+- Added loading states for create/update
+- Cancel confirmation for unsaved changes
+
+Code and build improvements
+- Extracted helpers in helpers.ts
+- Added RTK Query mutations: create/update for make and model
+- Vite config adjusted for vendor chunk splitting
+
+Next up: Delete with a modal window.
+============================================================================================
 
 
 

@@ -1,11 +1,24 @@
 /* =============================== TYPES =============================== */
 /* TypeScript interface defining shape of VehicleMake data from database */
 
+export type Vehicle = VehicleMake | VehicleModel;
+
 export type VehicleMake = {
   id: number;
   name: string;
   abrv: string;
   created_at: string; // Supabase timestamp format
+};
+
+export type CreateVehicleMake = {
+  name: string;
+  abrv: string;
+};
+
+export type CreateVehicleModel = {
+  name: string;
+  abrv: string;
+  makeId: number;
 };
 
 export type VehicleModelDb = {

@@ -1,24 +1,16 @@
-import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
-import { useForm, type FieldErrors } from 'react-hook-form';
 
-import { toast } from 'react-hot-toast';
-
-import {
-  useGetVehicleMakeQuery,
-  useGetVehicleModelsByMakeQuery,
-  useUpdateVehicleMakeMutation,
-} from '../store/vehicleApiSlice';
+import { useGetVehicleModelsByMakeQuery } from '../store/vehicleApiSlice';
 
 import { makeFormTemplate } from '../utils/formTemplates/modelFormTemplate';
+import { renderMakeInputField } from '../utils/formTemplates/renderFunctions';
+import { useMakeForm } from '../utils/helpers/useMakeForm';
 
 import VehicleGrid from '../components/layout/VehicleGrid';
 import StyledVehicleGridCompound from '../components/layout/StyledVehicleGrid';
 import LoadingSpinner from '../components/UI/LoadingSpinner/LoadingSpinner';
 import FormBase, { FormRow } from '../components/layout/FormBase';
-import { renderMakeInputField } from '../utils/formTemplates/renderFunctions';
 import Button from '../components/UI/Button/Button';
-import { onError } from '../utils/errorHandling/errorFormHandlers';
 import Pagination from '../components/UI/Pagination/Pagination';
 
 const gridTemplateAreas = `
@@ -35,21 +27,28 @@ export type MakeFormFields = {
   abrv: string;
 };
 
+/* This component calls the custom useMakeForm and extracts all the 
+necessary functions and state that we can use in rendering the UI and user
+submissions */
 function MakeEntity() {
-  const [isEditing, setIsEditing] = useState(false);
-
   const { vehicleItemId } = useParams();
   const [searchParams] = useSearchParams();
 
-  /* Fetch functions */
-
-  const { data: vehicleMake, isLoading: isLoadingVehicle } =
-    useGetVehicleMakeQuery(
-      {
-        id: vehicleItemId || '',
-      },
-      { skip: !vehicleItemId },
-    );
+  const {
+    vehicleMake,
+    isCreateMode,
+    isLoadingVehicle,
+    isUpdating,
+    isCreating,
+    register,
+    handleSubmit,
+    isEditing,
+    isSubmitting,
+    isDisabled,
+    handleEdit,
+    handleCancel,
+    validations,
+  } = useMakeForm(vehicleItemId || '');
 
   const {
     data: { items: vehicleModelsById, count: modelCount } = {
@@ -63,121 +62,67 @@ function MakeEntity() {
       page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
     },
     {
-      skip: !vehicleItemId,
+      skip: !vehicleItemId || isCreateMode,
     },
   );
 
-  /* Update Function */
-
-  const [updateVehicleMake, { isLoading: isUpdating }] =
-    useUpdateVehicleMakeMutation();
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { isSubmitting, isDirty },
-  } = useForm<MakeFormFields>({
-    defaultValues: {
-      name: '',
-      abrv: '',
-    },
-  });
-
-  function handleEdit() {
-    if (isEditing) {
-      const initialData = {
-        name: vehicleMake?.name || '',
-        abrv: vehicleMake?.abrv || '',
-      };
-      reset(initialData);
-    }
-    setIsEditing((prev) => !prev);
-  }
-
-  function onSubmit(data: MakeFormFields) {
-    console.log('Form submitted with data:', data);
-
-    if (!isDirty) {
-      toast.error('No changes made to submit');
-      setIsEditing(false);
-      return;
-    }
-
-    const updatedVehicleMake = {
-      id: vehicleMake!.id,
-      created_at: vehicleMake!.created_at,
-      name: data.name,
-      abrv: data.abrv,
-    };
-
-    updateVehicleMake(updatedVehicleMake).then(
-      ({ data: updatedMake, error }) => {
-        if (error) {
-          onError(error as FieldErrors<MakeFormFields>);
-        }
-
-        if (updatedMake && !error) {
-          toast.success('Vehicle make updated successfully');
-          reset(updatedMake);
-          setIsEditing(false);
-        }
-      },
-    );
-  }
-
-  /*  Updates defaultValues when API data arrives, vehicleModel changes or current
-      vehicleModel data changes
-  */
-
-  useEffect(() => {
-    if (vehicleMake) {
-      reset({
-        name: vehicleMake.name,
-        abrv: vehicleMake.abrv,
-      });
-    }
-  }, [vehicleMake, reset]);
-
-  const isDisabled = isEditing && !isSubmitting && !isUpdating;
-
   return (
-    /* Form that will always render, for VehicleMakes and VehicleModels */
     <>
       {isLoadingVehicle && <LoadingSpinner text="Loading current make" />}
+
+      {isCreateMode && <h1>Create New Vehicle Make</h1>}
+
+      {(isCreateMode || vehicleMake) && (
+        <FormBase onSubmit={handleSubmit} $gridColumnAreas={gridTemplateAreas}>
+          {!isCreateMode && (
+            <FormRow $area="edit">
+              <Button
+                $size="large"
+                onClick={() => handleEdit()}
+                disabled={isUpdating || isSubmitting}
+              >
+                {isEditing ? 'Cancel editing' : 'Edit'}
+              </Button>
+            </FormRow>
+          )}
+
+          {makeFormTemplate.map((field) =>
+            renderMakeInputField(field, register, isDisabled, validations),
+          )}
+
+          <FormRow $area="button">
+            {isCreateMode ? (
+              <>
+                <Button
+                  type="submit"
+                  $size="large"
+                  disabled={isSubmitting || isCreating}
+                >
+                  {isCreating ? 'Creating...' : 'Create Make'}
+                </Button>
+                <Button
+                  type="button"
+                  $size="large"
+                  onClick={handleCancel}
+                  disabled={isSubmitting || isCreating}
+                >
+                  Cancel
+                </Button>
+              </>
+            ) : (
+              <Button type="submit" $size="large" disabled={!isDisabled}>
+                Submit
+              </Button>
+            )}
+          </FormRow>
+        </FormBase>
+      )}
 
       {isLoadingModels && (
         <LoadingSpinner text="Loading models for this make" />
       )}
 
-      {vehicleMake && (
-        <FormBase
-          onSubmit={handleSubmit(onSubmit, onError)}
-          $gridColumnAreas={gridTemplateAreas}
-        >
-          <FormRow $area="edit">
-            <Button
-              $size="large"
-              onClick={() => handleEdit()}
-              disabled={isUpdating || isSubmitting}
-            >
-              {isEditing ? 'Cancel editing' : 'Edit'}
-            </Button>
-          </FormRow>
-          {makeFormTemplate.map((field) =>
-            renderMakeInputField(field, register, isEditing),
-          )}
-          <FormRow $area="button">
-            <Button type="submit" $size="large" disabled={!isDisabled}>
-              Submit
-            </Button>
-          </FormRow>
-        </FormBase>
-      )}
-
-      {/* If a Vehicle Make has corresponding Cars, they will be displayed in a grid */}
-
-      {modelCount > 0 && (
+      {!isCreateMode && modelCount > 0 && (
         <>
           <VehicleGrid>
             {vehicleModelsById?.map((model) => (

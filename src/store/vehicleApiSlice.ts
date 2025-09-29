@@ -1,6 +1,8 @@
 // RTK Query imports - createApi for API slice, fakeBaseQuery for direct Supabase calls
 import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
 import {
+  createMake,
+  createModel,
   getAllVehicleMakes,
   getAllVehicleModels,
   getVehicleMakeById,
@@ -54,6 +56,13 @@ export const vehicleApi = createApi({
         { type: 'VehiclesByMakeId' },
       ],
     }),
+    createVehicleMake: builder.mutation<
+      VehicleMake,
+      Omit<VehicleMake, 'id' | 'created_at'>
+    >({
+      queryFn: (makeData) => createMake(makeData),
+      invalidatesTags: ['VehicleMake'],
+    }),
 
     /* ======================= VEHICLE MODELS FUNCTIONS ======================= */
     getVehicleModels: builder.query<VehicleModelsResponse, GetVehiclesParams>({
@@ -82,6 +91,13 @@ export const vehicleApi = createApi({
         { type: 'VehiclesByMakeId' },
       ],
     }),
+    createVehicleModel: builder.mutation<
+      VehicleModelDb,
+      Omit<VehicleModel, 'id' | 'created_at' | 'carMaker'>
+    >({
+      queryFn: (modelData) => createModel(modelData),
+      invalidatesTags: ['VehicleModels', 'VehiclesByMakeId', 'VehicleModel'],
+    }),
   }),
 });
 
@@ -94,4 +110,6 @@ export const {
   useGetVehicleModelByIdQuery,
   useUpdateVehicleMakeMutation,
   useUpdateVehicleModelMutation,
+  useCreateVehicleMakeMutation,
+  useCreateVehicleModelMutation,
 } = vehicleApi;

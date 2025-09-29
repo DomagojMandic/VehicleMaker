@@ -1,6 +1,8 @@
 import { PAGE_SIZE } from './constants';
 import supabase from './supabase';
 import type {
+  CreateVehicleMake,
+  CreateVehicleModel,
   VehicleMake,
   VehicleModel,
   VehicleModelDb,
@@ -129,6 +131,21 @@ export async function updateMake(vehicleMake: VehicleMake) {
   }
 
   return { data: updatedVehicle as VehicleMake };
+}
+
+export async function createMake(makeData: CreateVehicleMake) {
+  const { data: newMake, error: createError } = await supabase
+    .from('VehicleMake')
+    .insert(makeData)
+    .select()
+    .single();
+
+  if (createError) {
+    console.error('Supabase error:', createError);
+    return { error: createError.message };
+  }
+
+  return { data: newMake as VehicleMake };
 }
 
 /* ============================== VEHICLE MODELS ============================= */
@@ -260,4 +277,19 @@ export async function updateModel(
   }
 
   return { data: updatedVehicle as VehicleModelDb };
+}
+
+export async function createModel(modelData: CreateVehicleModel) {
+  const { data: newModel, error: createError } = await supabase
+    .from('VehicleModel')
+    .insert(modelData)
+    .select()
+    .single();
+
+  if (createError) {
+    console.error('Supabase error:', createError);
+    return { error: createError.message };
+  }
+
+  return { data: newModel as VehicleModelDb };
 }

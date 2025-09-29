@@ -16,7 +16,7 @@ function Home() {
     >
       <Container $gap="2rem" $padding="2rem">
         <StyledContainerItem
-          to="/create-make"
+          to="/vehicle/make/new"
           $backgroundColor="var(--brown-300)"
           $height="15rem"
           $minHeight="15rem"
@@ -26,7 +26,7 @@ function Home() {
           </StyledContainerItem.Title>
         </StyledContainerItem>
         <StyledContainerItem
-          to="/create-model"
+          to="/vehicle/model/new"
           $backgroundColor="var(--brown-300)"
           $height="15rem"
           $minHeight="15rem"

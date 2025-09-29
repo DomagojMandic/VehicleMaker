@@ -1,8 +1,6 @@
 import { forwardRef, type SelectHTMLAttributes } from 'react';
 import styled from 'styled-components';
-import type { VehicleMake, VehicleModel } from '../../../api/types';
-
-export type Vehicle = VehicleMake | VehicleModel;
+import type { Vehicle } from '../../../api/types';
 
 const StyledSelect = styled.select`
   width: 100%;

@@ -1,5 +1,13 @@
-import type { FieldErrors, FieldValues } from 'react-hook-form';
+import type {
+  FieldErrors,
+  FieldValues,
+  RegisterOptions,
+} from 'react-hook-form';
 import { onError } from '../errorHandling/errorFormHandlers';
+import supabase from '../../api/supabase';
+import type { Vehicle } from '../../api/types';
+import type { FormFields } from '../../pages/ModelEntity';
+import type { MakeFormFields } from '../../pages/MakeEntity v1 - not in use';
 
 export const trimString = (formValue: string): boolean => {
   const formattedString = formValue.trim();
@@ -52,3 +60,144 @@ export const checkSelectNoChanges = (
   // If values are different, return true
   return true;
 };
+
+/* This function will be used as a validator on the database side */
+export const validateDBUnique = async (
+  value: string,
+  db: 'VehicleMake' | 'VehicleModel',
+  fieldName: string,
+): Promise<true | string> => {
+  try {
+    const { data: found, error } = await supabase
+      .from(db)
+      .select('id')
+      .ilike(fieldName, value.trim());
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return 'Database validation failed';
+    }
+
+    if (found && found.length > 0) {
+      return `Record with the same ${fieldName} already exists`;
+    }
+
+    return true;
+  } catch (networkError) {
+    console.error('Network error:', networkError);
+    return 'Network connection failed';
+  }
+};
+
+/* These functions return validations for the form fields. In each of the
+forms we extract the validation rules and then pass it into the render functions
+that will map over each field and apply the validations */
+
+export type ModelValidations = {
+  [K in keyof FormFields]: RegisterOptions<FormFields, K>;
+};
+
+export type MakeValidations = {
+  [K in keyof MakeFormFields]: RegisterOptions<MakeFormFields, K>;
+};
+
+export function getModelValidations(
+  isCreateMode: boolean,
+  dataTable: 'VehicleModel',
+  currentVehicle?: Vehicle,
+): ModelValidations {
+  return {
+    name: {
+      required: 'Model name is required',
+      minLength: {
+        value: 2,
+        message: 'Model name must be at least 2 characters',
+      },
+      maxLength: {
+        value: 30,
+        message: 'Model name must be at most 30 characters',
+      },
+      validate: {
+        notEmpty: (value: string) =>
+          value.trim() !== '' || 'Name cannot be empty or just spaces',
+        uniqueName: async (value: string) => {
+          if (!value.trim()) return true;
+          if (!isCreateMode && value === currentVehicle?.name) return true;
+          return validateDBUnique(value, dataTable, 'name');
+        },
+      },
+    },
+    abrv: {
+      required: 'Abbreviation is required',
+      minLength: {
+        value: 1,
+        message: 'Abbreviation must be at least 1 character',
+      },
+      maxLength: {
+        value: 15,
+        message: 'Abbreviation must be at most 15 characters',
+      },
+      validate: {
+        notEmpty: (value: string) =>
+          value.trim() !== '' || 'Abbreviation cannot be empty or just spaces',
+        uniqueName: async (value: string) => {
+          if (!value.trim()) return true;
+          if (!isCreateMode && value === currentVehicle?.abrv) return true;
+          return validateDBUnique(value, dataTable, 'abrv');
+        },
+      },
+    },
+    makeId: {
+      required: 'Make selection is required',
+    },
+  };
+}
+
+export function getMakeValidations(
+  isCreateMode: boolean,
+  dataTable: 'VehicleMake',
+  currentVehicle?: Vehicle,
+): MakeValidations {
+  return {
+    name: {
+      required: 'Model name is required',
+      minLength: {
+        value: 2,
+        message: 'Model name must be at least 2 characters',
+      },
+      maxLength: {
+        value: 30,
+        message: 'Model name must be at most 30 characters',
+      },
+      validate: {
+        notEmpty: (value: string) =>
+          value.trim() !== '' || 'Name cannot be empty or just spaces',
+        uniqueName: async (value: string) => {
+          if (!value.trim()) return true;
+          if (!isCreateMode && value === currentVehicle?.name) return true;
+          return validateDBUnique(value, dataTable, 'name');
+        },
+      },
+    },
+    abrv: {
+      required: 'Abbreviation is required',
+      minLength: {
+        value: 1,
+        message: 'Abbreviation must be at least 1 character',
+      },
+      maxLength: {
+        value: 15,
+        message: 'Abbreviation must be at most 15 characters',
+      },
+      validate: {
+        notEmpty: (value: string) =>
+          value.trim() !== '' || 'Abbreviation cannot be empty or just spaces',
+        uniqueName: async (value: string) => {
+          if (!value.trim()) return true;
+          if (!isCreateMode && value === currentVehicle?.abrv) return true;
+          return validateDBUnique(value, dataTable, 'abrv');
+        },
+      },
+    },
+  };
+}
