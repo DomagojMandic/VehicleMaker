@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 
-// Definiranje tipova za props - koristim $ prefix
 interface ContainerProps {
   $direction?: 'row' | 'column' | 'row-reverse' | 'column-reverse';
   $maxWidth?: string;
@@ -18,7 +17,6 @@ interface ContainerProps {
   $height?: string;
 }
 
-// Styled komponenta s tipovima - $ props se automatski ne proslijede na DOM
 const StyledContainer = styled.div<ContainerProps>`
   max-width: ${(props) => props.$maxWidth || '60%'};
   margin: 0 auto;

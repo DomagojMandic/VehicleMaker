@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast';
 
 import {
   useCreateVehicleModelMutation,
+  useDeleteVehicleModelMutation,
   useGetVehicleModelByIdQuery,
   useUpdateVehicleModelMutation,
 } from '../../store/vehicleApiSlice';
@@ -44,6 +45,9 @@ export const useModelForm = (vehicleItemId: string) => {
 
   const [createVehicleModel, { isLoading: isCreating }] =
     useCreateVehicleModelMutation();
+
+  const [deleteVehicleModel, { isLoading: isDeleting }] =
+    useDeleteVehicleModelMutation();
 
   // Initialize form only after data is available
   const {
@@ -162,6 +166,22 @@ export const useModelForm = (vehicleItemId: string) => {
     }
   }
 
+  function handleDelete(id: number) {
+    deleteVehicleModel({ id }).then(({ data: deletedModel, error }) => {
+      if (error) {
+        onError(error as FieldErrors<FormFields>);
+        return;
+      }
+
+      if (deletedModel && !error) {
+        toast.success(`Model ${deletedModel.name} deleted successfully`, {
+          position: 'top-center',
+        });
+        navigate('/models');
+      }
+    });
+  }
+
   /*  Updates defaultValues when API data arrives, vehicleModel changes or current
       vehicleModel data changes
   */
@@ -189,8 +209,10 @@ export const useModelForm = (vehicleItemId: string) => {
     isLoadingModel,
     isUpdating,
     isCreating,
+    isDeleting,
     register,
     handleSubmit: handleSubmit(onSubmit, onError),
+    handleDelete,
     isEditing,
     isSubmitting,
     isDirty,

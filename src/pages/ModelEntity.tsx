@@ -9,6 +9,7 @@ import Button from '../components/UI/Button/Button';
 import { modelFormTemplate } from '../utils/formTemplates/modelFormTemplate';
 import { renderModelInputField } from '../utils/formTemplates/renderFunctions';
 import { useModelForm } from '../utils/helpers/useModelForm';
+import DeleteVehicle from '../components/features/Modal/DeleteVehicle';
 
 /* REACT HOOK FORM IN STEPS */
 /* 
@@ -45,6 +46,7 @@ function ModelEntity() {
     isCreating,
     register,
     handleSubmit,
+    handleDelete,
     isEditing,
     isSubmitting,
     isDisabled,
@@ -71,6 +73,12 @@ function ModelEntity() {
       {isLoadingModel && <LoadingSpinner text="Loading current model" />}
 
       {isCreateMode && <h1>Create New Vehicle Model</h1>}
+
+      {!isCreateMode && vehicleItemId && (
+        <DeleteVehicle id={Number(vehicleItemId)} onDelete={handleDelete}>
+          <p>Are you sure you want to delete this vehicle model?</p>
+        </DeleteVehicle>
+      )}
 
       {(isCreateMode || vehicleModel) && (
         <FormBase onSubmit={handleSubmit} $gridColumnAreas={gridTemplateAreas}>

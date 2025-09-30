@@ -148,6 +148,24 @@ export async function createMake(makeData: CreateVehicleMake) {
   return { data: newMake as VehicleMake };
 }
 
+/* Cascade delete is implemented in Supabase so we do not have to have an additional function
+for deleting the individual Vehicle models, we will just invalidate them. */
+export async function deleteMake(id: number) {
+  const { data, error } = await supabase
+    .from('VehicleMake')
+    .delete()
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Supabase error:', error);
+    return { error: error.message };
+  }
+
+  return { data: data as VehicleMake };
+}
+
 /* ============================== VEHICLE MODELS ============================= */
 
 export async function getAllVehicleModels({ page }: GetVehiclesParams) {
@@ -292,4 +310,20 @@ export async function createModel(modelData: CreateVehicleModel) {
   }
 
   return { data: newModel as VehicleModelDb };
+}
+
+export async function deleteModel(id: number) {
+  const { data, error } = await supabase
+    .from('VehicleModel')
+    .delete()
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Supabase error:', error);
+    return { error: error.message };
+  }
+
+  return { data: data as VehicleModelDb };
 }

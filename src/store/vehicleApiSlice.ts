@@ -3,6 +3,8 @@ import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
 import {
   createMake,
   createModel,
+  deleteMake,
+  deleteModel,
   getAllVehicleMakes,
   getAllVehicleModels,
   getVehicleMakeById,
@@ -63,6 +65,15 @@ export const vehicleApi = createApi({
       queryFn: (makeData) => createMake(makeData),
       invalidatesTags: ['VehicleMake'],
     }),
+    deleteVehicleMake: builder.mutation<VehicleMake, { id: number }>({
+      queryFn: ({ id }) => deleteMake(id),
+      invalidatesTags: (_, __, { id }) => [
+        { type: 'VehicleMakeById', id },
+        { type: 'VehicleMake' },
+        { type: 'VehiclesByMakeId' },
+        'VehicleModels',
+      ],
+    }),
 
     /* ======================= VEHICLE MODELS FUNCTIONS ======================= */
     getVehicleModels: builder.query<VehicleModelsResponse, GetVehiclesParams>({
@@ -98,6 +109,14 @@ export const vehicleApi = createApi({
       queryFn: (modelData) => createModel(modelData),
       invalidatesTags: ['VehicleModels', 'VehiclesByMakeId', 'VehicleModel'],
     }),
+    deleteVehicleModel: builder.mutation<VehicleModelDb, { id: number }>({
+      queryFn: ({ id }) => deleteModel(id),
+      invalidatesTags: (_, __, { id }) => [
+        { type: 'VehicleModel', id },
+        { type: 'VehicleModels' },
+        { type: 'VehiclesByMakeId' },
+      ],
+    }),
   }),
 });
 
@@ -112,4 +131,6 @@ export const {
   useUpdateVehicleModelMutation,
   useCreateVehicleMakeMutation,
   useCreateVehicleModelMutation,
+  useDeleteVehicleMakeMutation,
+  useDeleteVehicleModelMutation,
 } = vehicleApi;

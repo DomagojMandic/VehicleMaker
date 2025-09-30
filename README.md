@@ -184,6 +184,33 @@ Code and build improvements
 Next up: Delete with a modal window.
 ============================================================================================
 
+SIXTH COMMIT
+Added delete functionality with cascade and routing improvements.
+
+Extended form hooks with delete logic
+- useMakeForm and useModelForm now handle delete mutations
+- Auto-redirect to list view after successful deletion
+
+Cascade delete implementation
+- Configured Supabase cascade on makes → models relationship
+- Deleting a make automatically removes all associated models
+
+Enhanced modal and confirmation flows
+- Reusable modal component for delete confirmation
+- Cancel confirmation prevents accidental data loss on unsaved changes
+- Improved disabled/loading states across all mutation actions
+
+Centralized error handling
+- Unified onError handler across create/update/delete
+- Consistent toast notifications for all operations
+
+Code quality improvements
+- Further refined helper functions (trim, empty checks, async validation)
+- Validation rules fully centralized and reusable
+- Reduced repetition through Supabase-side cascade logic
+
+Next up: Sorting and filtering with URL params.
+============================================================================================
 
 
 ```js

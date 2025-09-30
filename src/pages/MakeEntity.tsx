@@ -12,6 +12,7 @@ import LoadingSpinner from '../components/UI/LoadingSpinner/LoadingSpinner';
 import FormBase, { FormRow } from '../components/layout/FormBase';
 import Button from '../components/UI/Button/Button';
 import Pagination from '../components/UI/Pagination/Pagination';
+import DeleteVehicle from '../components/features/Modal/DeleteVehicle';
 
 const gridTemplateAreas = `
     "edit edit"
@@ -42,6 +43,7 @@ function MakeEntity() {
     isCreating,
     register,
     handleSubmit,
+    handleDelete,
     isEditing,
     isSubmitting,
     isDisabled,
@@ -71,6 +73,15 @@ function MakeEntity() {
       {isLoadingVehicle && <LoadingSpinner text="Loading current make" />}
 
       {isCreateMode && <h1>Create New Vehicle Make</h1>}
+
+      {!isCreateMode && vehicleItemId && (
+        <DeleteVehicle id={Number(vehicleItemId)} onDelete={handleDelete}>
+          <p>
+            Are you sure you want to delete this vehicle model? It will delete
+            all its correspoding models!
+          </p>
+        </DeleteVehicle>
+      )}
 
       {(isCreateMode || vehicleMake) && (
         <FormBase onSubmit={handleSubmit} $gridColumnAreas={gridTemplateAreas}>

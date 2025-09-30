@@ -8,6 +8,7 @@ import {
   useGetVehicleMakeQuery,
   useUpdateVehicleMakeMutation,
   useCreateVehicleMakeMutation,
+  useDeleteVehicleMakeMutation,
 } from '../../store/vehicleApiSlice';
 
 import { onError } from '../errorHandling/errorFormHandlers';
@@ -37,6 +38,8 @@ export const useMakeForm = (vehicleItemId: string) => {
     useUpdateVehicleMakeMutation();
   const [createVehicleMake, { isLoading: isCreating }] =
     useCreateVehicleMakeMutation();
+  const [deleteVehicleMake, { isLoading: isDeleting }] =
+    useDeleteVehicleMakeMutation();
 
   const {
     register,
@@ -85,8 +88,6 @@ export const useMakeForm = (vehicleItemId: string) => {
   is already called with 2 arguments so we can use it instantly.
   */
   function onSubmit(data: MakeFormFields) {
-    console.log('Form submitted with data:', data);
-
     /* If we are in create mode, we can only add new makes */
     if (isCreateMode) {
       const newVehicleMake = {
@@ -146,6 +147,25 @@ export const useMakeForm = (vehicleItemId: string) => {
     }
   }
 
+  function handleDelete(id: number) {
+    deleteVehicleMake({ id }).then(({ data: deletedModel, error }) => {
+      if (error) {
+        onError(error as FieldErrors<MakeFormFields>);
+        return;
+      }
+
+      if (deletedModel && !error) {
+        toast.success(
+          `Make ${deletedModel.name} and its models have been deleted successfully`,
+          {
+            position: 'top-right',
+          },
+        );
+        navigate('/makes');
+      }
+    });
+  }
+
   useEffect(() => {
     if (vehicleMake) {
       reset({
@@ -169,8 +189,10 @@ export const useMakeForm = (vehicleItemId: string) => {
     isLoadingVehicle,
     isUpdating,
     isCreating,
+    isDeleting,
     register,
     handleSubmit: handleSubmit(onSubmit, onError),
+    handleDelete,
     isEditing,
     isSubmitting,
     isDirty,
