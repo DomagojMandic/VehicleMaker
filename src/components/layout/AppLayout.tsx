@@ -11,8 +11,11 @@ function AppLayout() {
   return (
     <StyledAppLayout>
       <Header>
-        <Button onClick={moveBack} $size="large">
+        <Button onClick={() => moveBack()} $size="large">
           Back
+        </Button>
+        <Button onClick={() => moveBack('/home')} $size="large">
+          Home
         </Button>
       </Header>
       <Main>

@@ -8,7 +8,7 @@ import Button from '../components/UI/Button/Button';
 
 import { modelFormTemplate } from '../utils/formTemplates/modelFormTemplate';
 import { renderModelInputField } from '../utils/formTemplates/renderFunctions';
-import { useModelForm } from '../utils/helpers/useModelForm';
+import { useModelForm } from '../utils/hooks/useModelForm';
 import DeleteVehicle from '../components/features/Modal/DeleteVehicle';
 
 /* REACT HOOK FORM IN STEPS */

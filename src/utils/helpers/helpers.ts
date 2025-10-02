@@ -74,7 +74,6 @@ export const validateDBUnique = async (
       .ilike(fieldName, value.trim());
 
     if (error) {
-      console.error('Supabase error:', error);
       return 'Database validation failed';
     }
 
@@ -84,7 +83,6 @@ export const validateDBUnique = async (
 
     return true;
   } catch (networkError) {
-    console.error('Network error:', networkError);
     return 'Network connection failed';
   }
 };

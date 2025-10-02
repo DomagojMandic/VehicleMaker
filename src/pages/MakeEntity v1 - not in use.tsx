@@ -20,7 +20,7 @@ import FormBase, { FormRow } from '../components/layout/FormBase';
 import { renderMakeInputField } from '../utils/formTemplates/renderFunctions';
 import Button from '../components/UI/Button/Button';
 import { onError } from '../utils/errorHandling/errorFormHandlers';
-import Pagination from '../components/UI/Pagination/Pagination';
+// import Pagination from '../components/UI/Pagination/Pagination';
 import { getMakeValidations } from '../utils/helpers/helpers';
 
 const gridTemplateAreas = `
@@ -114,6 +114,7 @@ function MakeEntity() {
   // Handle cancel for create mode
   function handleCancel() {
     if (isDirty) {
+      // eslint-disable-next-line
       const confirmLeave = window.confirm(
         'You have unsaved changes. Are you sure you want to leave?',
       );
@@ -123,8 +124,6 @@ function MakeEntity() {
   }
 
   function onSubmit(data: MakeFormFields) {
-    console.log('Form submitted with data:', data);
-
     // Create mode logic
     if (isCreateMode) {
       const newVehicleMake = {
@@ -296,7 +295,9 @@ function MakeEntity() {
               </StyledVehicleGridCompound.Card>
             ))}
           </VehicleGrid>
-          <Pagination totalVehicles={modelCount} />
+          {/* Commented out because not in use and expects additional params */}
+
+          {/* <Pagination totalVehicles={modelCount} /> */}
         </>
       )}
     </>

@@ -7,13 +7,15 @@ import {
   deleteModel,
   getAllVehicleMakes,
   getAllVehicleModels,
+  getMakeNames,
   getVehicleMakeById,
   getVehicleModelById,
   getVehicleModelsByMakeId,
   updateMake,
   updateModel,
   type GetModelsByIdParams,
-  type GetVehiclesParams,
+  type GetVehicleMakesParams,
+  type GetVehicleModelsParams,
   type VehicleMakesResponse,
   type VehicleModelsResponse,
 } from '../api/vehicleApi';
@@ -33,21 +35,29 @@ export const vehicleApi = createApi({
     'VehicleMake',
     'VehicleModels',
     'VehiclesByMakeId',
+    'VehicleMakeNames',
     'VehicleModel',
     'VehicleMakeById',
   ],
   endpoints: (builder) => ({
     /* ======================= VEHICLE MAKES FUNCTIONS ======================= */
     /* Void is replaced with the actual query parameters for paginating */
-    getVehicleMakes: builder.query<VehicleMakesResponse, GetVehiclesParams>({
-      /* Functions are made in a way in which they are compatible with the RTK Query data
+    getVehicleMakes: builder.query<VehicleMakesResponse, GetVehicleMakesParams>(
+      {
+        /* Functions are made in a way in which they are compatible with the RTK Query data
         and error formats. */
-      queryFn: ({ page }) => getAllVehicleMakes({ page }),
-      providesTags: ['VehicleMake'], // This query caches VehicleMake data
-    }),
+        queryFn: ({ page, sortBy, filterByInput }) =>
+          getAllVehicleMakes({ page, sortBy, filterByInput }),
+        providesTags: ['VehicleMake'], // This query caches VehicleMake data
+      },
+    ),
     getVehicleMake: builder.query<VehicleMake, { id: string }>({
       queryFn: ({ id }) => getVehicleMakeById({ id }),
       providesTags: (_, __, { id }) => [{ type: 'VehicleMakeById', id }],
+    }),
+    getVehicleMakeNames: builder.query<{ name: string }[], void>({
+      queryFn: () => getMakeNames(),
+      providesTags: ['VehicleMakeNames'],
     }),
     updateVehicleMake: builder.mutation<VehicleMake, VehicleMake>({
       queryFn: (vehicleMake) => updateMake(vehicleMake),
@@ -76,8 +86,12 @@ export const vehicleApi = createApi({
     }),
 
     /* ======================= VEHICLE MODELS FUNCTIONS ======================= */
-    getVehicleModels: builder.query<VehicleModelsResponse, GetVehiclesParams>({
-      queryFn: ({ page }) => getAllVehicleModels({ page }),
+    getVehicleModels: builder.query<
+      VehicleModelsResponse,
+      GetVehicleModelsParams
+    >({
+      queryFn: ({ page, sortBy, filterByInput, filterBySelect }) =>
+        getAllVehicleModels({ page, sortBy, filterByInput, filterBySelect }),
       providesTags: ['VehicleModels'],
     }),
     getVehicleModelsByMake: builder.query<
@@ -124,6 +138,7 @@ export const vehicleApi = createApi({
 export const {
   useGetVehicleMakesQuery,
   useGetVehicleMakeQuery,
+  useGetVehicleMakeNamesQuery,
   useGetVehicleModelsQuery,
   useGetVehicleModelsByMakeQuery,
   useGetVehicleModelByIdQuery,

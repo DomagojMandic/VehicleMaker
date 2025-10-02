@@ -4,7 +4,7 @@ import { useGetVehicleModelsByMakeQuery } from '../store/vehicleApiSlice';
 
 import { makeFormTemplate } from '../utils/formTemplates/modelFormTemplate';
 import { renderMakeInputField } from '../utils/formTemplates/renderFunctions';
-import { useMakeForm } from '../utils/helpers/useMakeForm';
+import { useMakeForm } from '../utils/hooks/useMakeForm';
 
 import VehicleGrid from '../components/layout/VehicleGrid';
 import StyledVehicleGridCompound from '../components/layout/StyledVehicleGrid';
@@ -155,7 +155,10 @@ function MakeEntity() {
               </StyledVehicleGridCompound.Card>
             ))}
           </VehicleGrid>
-          <Pagination totalVehicles={modelCount} />
+          <Pagination
+            totalVehicles={modelCount}
+            localStorageKey="VEHICLE_MAKE_FORM_KEY"
+          />
         </>
       )}
     </>

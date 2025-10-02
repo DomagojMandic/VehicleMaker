@@ -13,7 +13,7 @@ import {
 
 import { onError } from '../errorHandling/errorFormHandlers';
 import type { MakeFormFields } from '../../pages/MakeEntity';
-import { getMakeValidations } from './helpers';
+import { getMakeValidations } from '../helpers/helpers';
 
 /* This form contains all the logic behind the Vehicle Make Form.
    The values extracted from this return has the necessary functions, data and state
@@ -76,6 +76,7 @@ export const useMakeForm = (vehicleItemId: string) => {
 
   function handleCancel() {
     if (isDirty) {
+      // eslint-disable-next-line
       const confirmLeave = window.confirm(
         'You have unsaved changes. Are you sure you want to leave?',
       );

@@ -12,7 +12,7 @@ import {
 } from '../../store/vehicleApiSlice';
 
 import { onError } from '../errorHandling/errorFormHandlers';
-import { getModelValidations } from './helpers';
+import { getModelValidations } from '../helpers/helpers';
 import type { FormFields } from '../../pages/ModelEntity';
 
 /* REACT HOOK FORM IN STEPS */
@@ -35,9 +35,14 @@ export const useModelForm = (vehicleItemId: string) => {
 
   // Fetch the vehicle model by ID
   const { data: vehicleModel, isLoading: isLoadingModel } =
-    useGetVehicleModelByIdQuery({
-      id: vehicleItemId || '',
-    });
+    useGetVehicleModelByIdQuery(
+      {
+        id: vehicleItemId || '',
+      },
+      {
+        skip: isCreateMode,
+      },
+    );
 
   // Destructure the mutation hook and creating state from a tuple
   const [updateVehicleModel, { isLoading: isUpdating }] =
@@ -89,6 +94,8 @@ export const useModelForm = (vehicleItemId: string) => {
   // Handle cancel for create mode
   function handleCancel() {
     if (isDirty) {
+      /* This is left in because this was seen on many of the sites I use on a daily basis */
+      // eslint-disable-next-line
       const confirmLeave = window.confirm(
         'You have unsaved changes. Are you sure you want to leave?',
       );

@@ -212,6 +212,55 @@ Code quality improvements
 Next up: Sorting and filtering with URL params.
 ============================================================================================
 
+SEVENTH COMMIT
+
+In this commit, for finding the optimal resolution I left the previous versions of components to see how I refactored it to be a bit cleaner and dry. They were left intentionally.
+
+Implemented full filtering, sorting, and pagination with state persistence.
+
+Moved hooks from utils/helpers/ to utils/hooks/
+
+Filtering and sorting functionality:
+Complete filtering system for VehicleMake and VehicleModel pages
+Added localStorage persistence to retain filter state across sessions
+Created useVehicleFilters hook to share filtering logic between components
+Added debounced search with 300ms delay for optimized performance
+Implemented dual filtering on VehicleModel (text input + dropdown)
+
+API improvements
+Extended API functions with sorting and filtering parameters
+Added getMakeNames() function for dropdown options
+Removed all console.log statements – ready for production
+Improved error handling across all API functions
+
+
+Based on all requests, the application is fully completed:
+
+As of this commit, the requirements are met:
+
+- [x] Create - add new data to the database
+- [x] Read - get existing data from the database
+- [x] Update - update existing data in the database
+- [x] Delete - remove existing data from the database
+
+- [x] Create a list/grid page where the list/grid should have paging, sorting, and filtering functionality
+- [x] For list or grid pages, save the current filter state so that the next time the user opens the same screen, the previous filters are applied automatically
+- [x] Paging, sorting and filtering should be executed through REST API calls
+- [x] Also, add other CRUD functionalities (not just reading and editing)
+- [x] Create edit pages for the list/grid on their routes
+- [x] Create and edit pages should have form validation
+- [x] Use one of the available REST API services
+
+- [x] REST API service should store the following elements:
+  - VehicleMake (Id, Name, Abrv) e.g. BMW, Ford, Volkswagen
+  - VehicleModel (Id, MakeId, Name, Abrv) e.g. 128, 325, X5 (BMW)
+- [x] In your database, these two entities should be connected through the MakeId field
+
+============================================================================================
+
+
+
+
 
 ```js
 export default defineConfig([

@@ -9,6 +9,7 @@ function Container({
   children,
   $direction,
   $maxWidth,
+  $width,
   $padding,
   $gap,
   $justify,
@@ -16,6 +17,7 @@ function Container({
   $backgroundColor,
   $color,
   $height,
+  $radius,
 }: ContainerProps) {
   return (
     <StyledContainer
@@ -28,6 +30,8 @@ function Container({
       $backgroundColor={$backgroundColor}
       $color={$color}
       $height={$height}
+      $width={$width}
+      $radius={$radius}
     >
       {children}
     </StyledContainer>

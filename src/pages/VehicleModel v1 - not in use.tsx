@@ -1,9 +1,11 @@
-import { useEffect, type ChangeEvent } from 'react';
+import { useSearchParams } from 'react-router';
+
+import { useEffect, useState, type ChangeEvent } from 'react';
 
 import VehicleGrid from '../components/layout/VehicleGrid';
 import StyledVehicleGridCompound from '../components/layout/StyledVehicleGrid';
 import LoadingSpinner from '../components/UI/LoadingSpinner/LoadingSpinner';
-import Pagination from '../components/UI/Pagination/Pagination';
+// import Pagination from '../components/UI/Pagination/Pagination';
 
 import {
   useGetVehicleMakeNamesQuery,
@@ -18,37 +20,32 @@ import {
   saveFilters,
   VEHICLE_MODEL_FILTERS_KEY,
 } from '../utils/localStorage/FilterState';
-import { useVehicleFilters } from '../utils/hooks/useVehicleFilters';
 
-/* This component did not get abstracted in a context or custom hook because it has different parameters 
-and logic than the VehicleMake component */
+/* This version is not in use because in the newer version we eliminated the
+ useEffect for setting initial state because it ended up causing issues in returning to
+ the page while using the application */
+
 function VehicleModel() {
   /* COMPONENT STATE */
-  const storedFilters = loadFilters(VEHICLE_MODEL_FILTERS_KEY);
-
-  const {
-    sortBy,
-    setSortBy,
-    userFilter,
-    setUserFilter,
-    selectFilter,
-    setSelectFilter,
-    searchParams,
-    setSearchParams,
-  } = useVehicleFilters(VEHICLE_MODEL_FILTERS_KEY, {
-    hasSelectFilter: true,
-    inputParamName: 'filterByInput',
-    selectParamName: 'filterBySelect',
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [sortBy, setSortBy] = useState<string | undefined>(
+    searchParams.get('sortBy') ?? undefined,
+  );
+  const [userFilter, setUserFilter] = useState<string | undefined>(
+    searchParams.get('filterByInput') ?? '',
+  );
+  const [selectFilter, setSelectFilter] = useState<string | undefined>(
+    searchParams.get('filterBySelect') ?? '',
+  );
 
   /* API QUERY */
 
   /* We destructure the query so that we have direct access to VehicleMakes Array */
   const {
-    data: { items: vehicleModels, count } = { items: [], count: 0 },
+    data: { items: vehicleModels } = { items: [], count: 0 },
     isLoading,
   } = useGetVehicleModelsQuery({
-    page: Number(searchParams.get('page')) || Number(storedFilters?.page) || 1,
+    page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
     sortBy,
     filterByInput: userFilter,
     filterBySelect: selectFilter,
@@ -82,7 +79,7 @@ function VehicleModel() {
 
   const handleFilterSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const { value } = event.target;
-    setSelectFilter!(value);
+    setSelectFilter(value);
 
     setSearchParams((prevParams) => {
       prevParams.set('page', '1');
@@ -104,6 +101,39 @@ function VehicleModel() {
   /* Here we are handling the input as a controlled element so that we can later
   on debounce the input */
 
+  /* useEffect - Mount logic */
+
+  useEffect(() => {
+    // If URL doesn't have any params, we check the local storage for them and set them in the params.
+    const storedFilters = loadFilters(VEHICLE_MODEL_FILTERS_KEY);
+
+    if (storedFilters) {
+      setSearchParams((prevParams) => {
+        /* Had to use newParams because prevParams wasn't working as expected */
+        const newParams = new URLSearchParams(prevParams.toString());
+
+        if (!newParams.get('page') && storedFilters?.page) {
+          newParams.set('page', storedFilters.page);
+        }
+        if (!newParams.get('sortBy') && storedFilters?.sortBy) {
+          newParams.set('sortBy', storedFilters.sortBy);
+          setSortBy(storedFilters.sortBy);
+        }
+        if (!newParams.get('filterByInput') && storedFilters?.filterByInput) {
+          newParams.set('filterByInput', storedFilters.filterByInput);
+          setUserFilter(storedFilters.filterByInput);
+        }
+
+        if (!newParams.get('filterBySelect') && storedFilters?.filterBySelect) {
+          newParams.set('filterBySelect', storedFilters.filterBySelect);
+          setSelectFilter(storedFilters.filterBySelect);
+        }
+
+        return newParams;
+      });
+    }
+  }, []);
+
   /* useEffect - localStorage logic  */
 
   useEffect(() => {
@@ -111,7 +141,7 @@ function VehicleModel() {
       sortBy: searchParams.get('sortBy') ?? undefined,
       filterByInput: searchParams.get('filterByInput') ?? undefined,
       filterBySelect: searchParams.get('filterBySelect') ?? undefined,
-      page: searchParams.get('page') ?? storedFilters?.page ?? undefined,
+      page: searchParams.get('page') ?? undefined,
     };
 
     saveFilters(VEHICLE_MODEL_FILTERS_KEY, currentFilters);
@@ -121,6 +151,7 @@ function VehicleModel() {
   URL search params. There are 5 different values that can be assigned in the params */
 
   /* useEffect - Debounced Input Filter */
+
   useEffect(() => {
     /* Since we are using Redux Toolkit Query, we do not need abort controller */
     const debounceTimeout = setTimeout(() => {
@@ -142,30 +173,20 @@ function VehicleModel() {
         }
 
         /* sortBy and selectFilter is not in the dependency array because this shouldn't
-      re-render on change. We set this manually because if we have sortBy in 
-      localStorage and we want to move for example from:
-      http://localhost:5173/models?page=1&filterBy=a&sortBy=name-desc
-      to
-      http://localhost:5173/models
-      Local storage will not retain the sort parameter and we will lose it.
-      */
-
-        // Reset page if select filter changed
-        if (
-          (selectFilter || undefined) !==
-          (newParams.get('filterBySelect') || undefined)
-        ) {
-          newParams.set('page', '1');
+        re-render on change. We set this manually because if we have sortBy in 
+        localStorage and we want to move for example from:
+        http://localhost:5173/models?page=1&filterBy=a&sortBy=name-desc
+        to
+        http://localhost:5173/models
+        
+        Local storage will not retain the sort parameter and we will lose it.
+        */
+        if (sortBy) {
+          newParams.set('sortBy', sortBy);
         }
 
         if (selectFilter) {
           newParams.set('filterBySelect', selectFilter);
-        } else {
-          newParams.delete('filterBySelect');
-        }
-
-        if (sortBy) {
-          newParams.set('sortBy', sortBy);
         }
 
         return newParams;
@@ -175,7 +196,7 @@ function VehicleModel() {
     return () => {
       clearTimeout(debounceTimeout);
     };
-  }, [userFilter, selectFilter]);
+  }, [userFilter]);
 
   const { data: vehicleModelsByMake = [] } = useGetVehicleMakeNamesQuery();
 
@@ -185,14 +206,7 @@ function VehicleModel() {
 
   return (
     <>
-      <Container
-        $width="60%"
-        $direction="row"
-        $align="center"
-        $gap="2rem"
-        $padding="2rem"
-        $radius="8px"
-      >
+      <Container $width="50%" $direction="column">
         {vehicleModelsByMake?.length > 0 && (
           <>
             {/* User input field */}
@@ -206,8 +220,6 @@ function VehicleModel() {
               onChange={(event) => handleFilterSelectChange(event)}
               value={selectFilter}
             >
-              <StyledOption value="">Filter by make</StyledOption>
-
               {vehicleModelsByMake?.map((make) => (
                 <StyledOption key={make.name} value={make.name}>
                   {make.name}
@@ -231,7 +243,6 @@ function VehicleModel() {
           })}
         </StyledSelect>
       </Container>
-
       {/* Results grid */}
       {vehicleModels?.length > 0 && (
         <>
@@ -255,10 +266,8 @@ function VehicleModel() {
               </StyledVehicleGridCompound.Card>
             ))}
           </VehicleGrid>
-          <Pagination
-            totalVehicles={count}
-            localStorageKey={VEHICLE_MODEL_FILTERS_KEY}
-          />
+          {/* Commented out because not in use and expects additional params */}
+          {/* <Pagination totalVehicles={count} /> */}
         </>
       )}
 

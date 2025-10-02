@@ -7,6 +7,7 @@ interface WrapperProps {
   $width?: string;
   $height?: string;
   $justify?: JustifyOptions;
+  $gap?: string;
 }
 
 const StyledWrapper = styled.div<WrapperProps>`
@@ -26,9 +27,15 @@ function ButtonWrapper({
   $width,
   $height,
   $justify,
+  $gap,
 }: ButtonWrapperProps) {
   return (
-    <StyledWrapper $width={$width} $height={$height} $justify={$justify}>
+    <StyledWrapper
+      $width={$width}
+      $height={$height}
+      $justify={$justify}
+      $gap={$gap}
+    >
       {children}
     </StyledWrapper>
   );

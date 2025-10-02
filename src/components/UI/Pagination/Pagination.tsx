@@ -1,6 +1,7 @@
 import { useSearchParams } from 'react-router';
 import styled from 'styled-components';
 import { PAGE_SIZE } from '../../../api/constants';
+import { loadFilters } from '../../../utils/localStorage/FilterState';
 
 const PaginationContainer = styled.div`
   display: flex;
@@ -35,17 +36,19 @@ const PageInfo = styled.span`
 
 interface PaginationProps {
   totalVehicles: number;
+  localStorageKey: string;
 }
 
-function Pagination({ totalVehicles }: PaginationProps) {
+function Pagination({ totalVehicles, localStorageKey }: PaginationProps) {
   /* We are storing the pagination in the URL to keep it consistent */
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const storedFilters = loadFilters(localStorageKey);
+
   /* We are getting the current page number from the URL and if we do not have it,
   we set it up on page 1 */
-  const currentPageNumber = !searchParams.get('page')
-    ? 1
-    : Number(searchParams.get('page'));
+  const currentPageNumber =
+    Number(searchParams.get('page')) || Number(storedFilters?.page) || 1;
 
   const pageCount = Math.ceil(totalVehicles / PAGE_SIZE);
 

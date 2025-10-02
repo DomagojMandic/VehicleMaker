@@ -111,6 +111,7 @@ function ModelEntity() {
   // Handle cancel for create mode
   function handleCancel() {
     if (isDirty) {
+      // eslint-disable-next-line
       const confirmLeave = window.confirm(
         'You have unsaved changes. Are you sure you want to leave?',
       );

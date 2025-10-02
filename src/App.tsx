@@ -1,4 +1,5 @@
 import { Provider } from 'react-redux';
+import { lazy } from 'react';
 
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router';
 import { Toaster } from 'react-hot-toast';
@@ -10,10 +11,11 @@ import Home from './pages/Home';
 import VehicleModel from './pages/VehicleModel';
 import VehicleMake from './pages/VehicleMake';
 import store from './store/store';
-import ModelEntity from './pages/ModelEntity';
-import MakeEntity from './pages/MakeEntity';
-import CreateMake from './pages/CreateMake';
-import CreateModel from './pages/CreateModel';
+
+/* This doesn't need to be lazy loaded because it's only 7kb, but for the purpose of this
+example, we will lazy load it because it is the furthest point of the application */
+const ModelEntityLazy = lazy(() => import('./pages/ModelEntity'));
+const MakeEntityLazy = lazy(() => import('./pages/MakeEntity'));
 
 const router = createBrowserRouter([
   {
@@ -31,12 +33,10 @@ const router = createBrowserRouter([
       {
         path: 'vehicle',
         children: [
-          { path: 'model/:vehicleItemId', element: <ModelEntity /> },
-          { path: 'make/:vehicleItemId', element: <MakeEntity /> },
+          { path: 'model/:vehicleItemId', element: <ModelEntityLazy /> },
+          { path: 'make/:vehicleItemId', element: <MakeEntityLazy /> },
         ],
       },
-      { path: 'create-make', element: <CreateMake /> },
-      { path: 'create-model', element: <CreateModel /> },
     ],
   },
 ]);

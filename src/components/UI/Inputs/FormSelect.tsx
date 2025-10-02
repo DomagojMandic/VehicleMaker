@@ -2,7 +2,7 @@ import { forwardRef, type SelectHTMLAttributes } from 'react';
 import styled from 'styled-components';
 import type { Vehicle } from '../../../api/types';
 
-const StyledSelect = styled.select`
+export const StyledSelect = styled.select`
   width: 100%;
   font-family: var(--font-main);
   color: var(--gray-700);
@@ -25,7 +25,7 @@ const StyledSelect = styled.select`
   }
 `;
 
-const StyledOption = styled.option`
+export const StyledOption = styled.option`
   color: var(--gray-700);
   background-color: var(--white);
 `;

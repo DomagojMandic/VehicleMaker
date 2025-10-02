@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 interface ContainerProps {
   $direction?: 'row' | 'column' | 'row-reverse' | 'column-reverse';
+  $width?: string;
   $maxWidth?: string;
   $padding?: string;
   $gap?: string;
@@ -15,9 +16,11 @@ interface ContainerProps {
   $backgroundColor?: string;
   $color?: string;
   $height?: string;
+  $radius?: string;
 }
 
 const StyledContainer = styled.div<ContainerProps>`
+  width: ${(props) => props.$width || 'auto'};
   max-width: ${(props) => props.$maxWidth || '60%'};
   margin: 0 auto;
   padding: ${(props) => props.$padding || 'var(--spacing-md)'};
@@ -29,6 +32,7 @@ const StyledContainer = styled.div<ContainerProps>`
   background-color: ${(props) => props.$backgroundColor || 'var(--brown-100)'};
   color: ${(props) => props.$color || 'var(--gray-100)'};
   height: ${(props) => props.$height || 'auto'};
+  border-radius: ${(props) => props.$radius || ''};
 `;
 
 export default StyledContainer;

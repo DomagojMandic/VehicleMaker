@@ -1,11 +1,12 @@
-import { useEffect, type ChangeEvent } from 'react';
+import { useSearchParams } from 'react-router';
+import { useEffect, useState, type ChangeEvent } from 'react';
 
 import { useGetVehicleMakesQuery } from '../store/vehicleApiSlice';
 
 import StyledVehicleGridCompound from '../components/layout/StyledVehicleGrid';
 import VehicleGrid from '../components/layout/VehicleGrid';
 import LoadingSpinner from '../components/UI/LoadingSpinner/LoadingSpinner';
-import Pagination from '../components/UI/Pagination/Pagination';
+// import Pagination from '../components/UI/Pagination/Pagination';
 import { StyledOption, StyledSelect } from '../components/UI/Inputs/FormSelect';
 
 import { sortMakeTemplate } from '../utils/formTemplates/sortFilterTemplates';
@@ -16,36 +17,30 @@ import {
   saveFilters,
   VEHICLE_MAKE_FILTERS_KEY,
 } from '../utils/localStorage/FilterState';
-import { useVehicleFilters } from '../utils/hooks/useVehicleFilters';
+
+/* This version is not in use because in the newer version we eliminated the
+ useEffect for setting initial state because it ended up causing issues in returning to
+ the page while using the application */
 
 function VehicleMake() {
   /* COMPONENT STATE */
-  const storedFilters = loadFilters(VEHICLE_MAKE_FILTERS_KEY);
-
-  /* On initial call, we set up the state based on URL params or local storage */
-  const {
-    sortBy,
-    setSortBy,
-    userFilter,
-    setUserFilter,
-    searchParams,
-    setSearchParams,
-  } = useVehicleFilters(VEHICLE_MAKE_FILTERS_KEY, {
-    hasSelectFilter: false,
-    inputParamName: 'filterBy',
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [sortBy, setSortBy] = useState<string | undefined>(
+    searchParams.get('sortBy') ?? undefined,
+  );
+  const [userFilter, setUserFilter] = useState<string | undefined>(
+    searchParams.get('filterBy') ?? '',
+  );
 
   /* API QUERIES */
 
   /* We destructure the query so that we have direct access to VehicleMakes Array */
-  const {
-    data: { items: vehicleMakes, count } = { items: [], count: 0 },
-    isLoading,
-  } = useGetVehicleMakesQuery({
-    page: Number(searchParams.get('page')) || Number(storedFilters?.page) || 1,
-    sortBy,
-    filterByInput: userFilter,
-  });
+  const { data: { items: vehicleMakes } = { items: [], count: 0 }, isLoading } =
+    useGetVehicleMakesQuery({
+      page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
+      sortBy: searchParams.get('sortBy') ?? undefined,
+      filterByInput: searchParams.get('filterBy') ?? undefined,
+    });
 
   /* EVENT HANDLERS */
   const handleFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -84,6 +79,34 @@ function VehicleMake() {
   on debounce the input */
 
   /* This useEffect only runs on mount and sets up the Params */
+
+  /* useEffect - Mount logic */
+
+  useEffect(() => {
+    // If URL doesn't have any params, we check the local storage for them and set them in the params.
+    const storedFilters = loadFilters(VEHICLE_MAKE_FILTERS_KEY);
+
+    if (storedFilters) {
+      setSearchParams((prevParams) => {
+        /* Had to use newParams because prevParams wasn't working as expected */
+        const newParams = new URLSearchParams(prevParams.toString());
+
+        if (!newParams.get('page') && storedFilters?.page) {
+          newParams.set('page', storedFilters.page);
+        }
+        if (!newParams.get('sortBy') && storedFilters?.sortBy) {
+          newParams.set('sortBy', storedFilters.sortBy);
+          setSortBy(storedFilters.sortBy);
+        }
+        if (!newParams.get('filterBy') && storedFilters?.filterBy) {
+          newParams.set('filterBy', storedFilters.filterBy);
+          setUserFilter(storedFilters.filterBy);
+        }
+
+        return newParams;
+      });
+    }
+  }, []);
 
   /* useEffect - localStorage logic */
 
@@ -128,11 +151,6 @@ function VehicleMake() {
         
         Local storage will not retain the sort parameter and we will lose it.
         */
-
-        if (!newParams.get('page') && storedFilters?.page) {
-          newParams.set('page', String(storedFilters.page));
-        }
-
         if (sortBy) {
           newParams.set('sortBy', sortBy);
         }
@@ -161,8 +179,6 @@ function VehicleMake() {
         $justify="space-between"
         $gap="2rem"
         $align="center"
-        $padding="2rem"
-        $radius="8px"
       >
         {/* User input field */}
         <FormInput
@@ -206,10 +222,9 @@ function VehicleMake() {
               </StyledVehicleGridCompound.Card>
             ))}
           </VehicleGrid>
-          <Pagination
-            totalVehicles={count}
-            localStorageKey={VEHICLE_MAKE_FILTERS_KEY}
-          />
+          {/* Commented out because not in use and expects additional params */}
+
+          {/* <Pagination totalVehicles={count} />{' '} */}
         </>
       )}
 
